@@ -3,8 +3,11 @@ package com.in28minutes.rest.webservices.restfulwebservices.user;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,15 +39,7 @@ public class UserResource {
     }
 
     @PostMapping(path = "/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user) {
-        if (user.getName() == null || user.getBirthDate() == null) {
-            throw new IncompleteUserDataException("Provide all the fields");
-        }
-
-        if (user.getName().isBlank()) {
-            throw new IncompleteUserDataException("Provide all the fields");
-        }
-
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
         User savedUser = userService.save(user);
 
         URI location = ServletUriComponentsBuilder
@@ -64,8 +59,12 @@ public class UserResource {
     }
 
     @DeleteMapping(path = "/users/{id}")
-    public User deleteOne(@PathVariable int id) {
-        return userService.deleteOne(id);
+    public void deleteOne(@PathVariable int id) {
+        User user = userService.deleteOne(id);
+
+        if (user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
     }
 
     @GetMapping(path = "/users/{id}/posts")
