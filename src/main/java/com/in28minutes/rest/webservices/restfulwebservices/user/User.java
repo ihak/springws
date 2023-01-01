@@ -6,13 +6,19 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description="Details about the user object.")
 public class User {
     private Integer id;
 
     @Size(min=2, message = "Name should have atleast 2 characters")
+    @ApiModelProperty(notes="Name should have at least 2 characters")
     private String name;
 
     @Future(message = "Birthdate should be a future date")
+    @ApiModelProperty(notes="Birthdate should be in the past.")
     private Date birthDate;
     
     public Integer getId() {
